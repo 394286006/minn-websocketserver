@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import p.minn.controller.Controller;
-import p.minn.packet.JsonDecoder;
-import p.minn.packet.JsonEncoder;
-import p.minn.packet.JsonPacket;
-import p.minn.packet.JsonWrapper;
-import p.minn.utils.Constants;
+import p.minn.packet.websocket.JsonDecoder;
+import p.minn.packet.websocket.JsonEncoder;
+import p.minn.packet.websocket.JsonPacket;
+import p.minn.packet.websocket.JsonWrapper;
+import p.minn.utils.WebSocketConstants;
 import p.minn.utils.DateUtil;
 
 /**
@@ -23,13 +23,13 @@ public class Client extends BaseClient<JsonPacket, JsonWrapper> {
     super(uuid,socket, clientId, clientController);
     decoder = new JsonDecoder(this, socket);
     encoder = new JsonEncoder(socket);
-  }
+  }    
 
-  public void broadCast(JsonPacket packet) {
+  public void broadCast(JsonPacket packet) throws Exception {
     evt.broadcast(group, packet, this.clientId);
   }
 
-  public void onEvent(JsonWrapper wrapper) {
+  public void onEvent(JsonWrapper wrapper,JsonPacket packet) throws Exception {
     if (wrapper.getMethod().equals("msg")) {
       msg(wrapper);
     }
@@ -37,7 +37,7 @@ public class Client extends BaseClient<JsonPacket, JsonWrapper> {
   
   
 
-  private void msg(JsonWrapper wrapper) {
+  private void msg(JsonWrapper wrapper) throws Exception {
     long last=System.currentTimeMillis();
     long current=last;
     while (true) {
@@ -45,7 +45,7 @@ public class Client extends BaseClient<JsonPacket, JsonWrapper> {
       if(current-last>1000){
         JsonWrapper newwrapper=wrapper.clone();
         JsonPacket newpacket = new JsonPacket(this.clientId);
-        newwrapper.setStatus(Constants.CONNECTING);
+        newwrapper.setStatus(WebSocketConstants.CONNECTING);
         newwrapper.setGroup(group);
         newwrapper.setClientId(this.clientId);
         newwrapper.getData().clear();
@@ -58,14 +58,14 @@ public class Client extends BaseClient<JsonPacket, JsonWrapper> {
   }
 
   @Override
-  public void existsMessage() {
+  public void existsMessage(double responseId) throws Exception {
     // TODO Auto-generated method stub
     Map<String,Object> data=new HashMap<String,Object>();
     Map<String,Object> connect=new HashMap<String,Object>();
     connect.put("msg", "用户已登录");
     data.put("data", connect);
     data.put("uuid", uuid);
-    data.put("status", Constants.CONNECTED);
+    data.put("status", WebSocketConstants.CONNECTED);
     JsonPacket newpacket = new JsonPacket(this.clientId);
     newpacket.setBody(data);
     this.getEncoder().add(newpacket);
@@ -75,5 +75,11 @@ public class Client extends BaseClient<JsonPacket, JsonWrapper> {
     // TODO Auto-generated method stub
     
   }
+
+  public void onControllerEvent(JsonPacket packet) throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
 
 }

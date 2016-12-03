@@ -1,8 +1,8 @@
 package p.minn.server;
 
 import p.minn.controller.Controller;
-import p.minn.packet.JsonPacket;
-import p.minn.packet.JsonWrapper;
+import p.minn.packet.websocket.JsonPacket;
+import p.minn.packet.websocket.JsonWrapper;
 
 /**
  * @author minn
