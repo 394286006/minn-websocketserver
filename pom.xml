@@ -16,7 +16,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>p.minn</groupId>
-			<artifactId>minn-protocal-core</artifactId>
+			<artifactId>minn-protocol-core</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 
